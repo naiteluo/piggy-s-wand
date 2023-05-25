@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Switch } from "@headlessui/react";
 import { IList, IListItem } from "./IData";
 import ListItem from "./list-item";
 import AddItemDialog from "./add-item-dialog";
@@ -76,7 +75,7 @@ export default function HomePage() {
   return (
     <main className="flex min-h-screen flex-col items-center bg-white p-4">
       <nav className="fixed top-0 flex w-full flex-wrap items-center justify-between bg-pink-600 p-4 shadow-md">
-        <h1>Piggy's Wand</h1>
+        <h1>Piggy&apos;s Wand</h1>
         <button></button>
       </nav>
       <section
