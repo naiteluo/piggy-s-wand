@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IList, IListItem } from "./IData";
 import ListItem from "./list-item";
 import AddItemDialog from "./add-item-dialog";
@@ -10,9 +10,13 @@ import { getListFromDB, updateListToDB } from "./data";
 
 export default function HomePage() {
   const [currentItem, setCurrentItem] = useState<IListItem | null>(null);
-  const [list, setList] = useState<IList>(getListFromDB());
+  const [list, setList] = useState<IList>([]);
 
-  function setListAndUpdateDB (list:IList) {
+  useEffect(() => {
+    setList(getListFromDB());
+  });
+
+  function setListAndUpdateDB(list: IList) {
     setList(list);
     updateListToDB(list);
   }
@@ -31,7 +35,11 @@ export default function HomePage() {
 
   function handleItemUpdate(item: IListItem) {
     const index = list.findIndex((v) => item.id === v.id);
-    setListAndUpdateDB([...list.slice(0, index), item, ...list.slice(index + 1)]);
+    setListAndUpdateDB([
+      ...list.slice(0, index),
+      item,
+      ...list.slice(index + 1),
+    ]);
   }
 
   function handleRemoveItem(item: IListItem) {
