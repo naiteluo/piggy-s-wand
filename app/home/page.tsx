@@ -82,7 +82,7 @@ export default function HomePage() {
 
   return (
     <main className="flex min-h-screen flex-col items-center bg-white p-4">
-      <nav className="fixed top-0 flex w-full flex-wrap items-center justify-between bg-pink-600 p-4 shadow-md">
+      <nav className="fixed top-0 flex w-full flex-wrap items-center justify-between bg-pink-600 p-4 shadow-md text-white">
         <h1>Piggy&apos;s Wand</h1>
         <button></button>
       </nav>
