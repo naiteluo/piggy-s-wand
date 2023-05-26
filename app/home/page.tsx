@@ -14,7 +14,7 @@ export default function HomePage() {
 
   useEffect(() => {
     setList(getListFromDB());
-  });
+  }, []);
 
   function setListAndUpdateDB(list: IList) {
     setList(list);
@@ -104,6 +104,7 @@ export default function HomePage() {
                   alt="what"
                   width={128 / 2}
                   height={128 / 2}
+                  priority={true}
                 ></Image>
               );
             } else {
