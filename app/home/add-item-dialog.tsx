@@ -1,6 +1,8 @@
 import { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { IListItem } from "./IData";
+import { catelogList } from "./data";
+import CatelogSelect from "./catelog-select";
 
 export interface IAddItemDialogOpenProps {
   isOpen: boolean;
@@ -10,8 +12,9 @@ export interface IAddItemDialogOpenProps {
 
 const DraftItemTemplate = {
   title: "",
-  id: -1,
+  id: "",
   status: 1,
+  type: 1,
 };
 
 export default function AddItemDialog(props: IAddItemDialogOpenProps) {
@@ -21,8 +24,11 @@ export default function AddItemDialog(props: IAddItemDialogOpenProps) {
     ...DraftItemTemplate,
   });
 
+  const [selectedCatelog, setSelectedCatelog] = useState(catelogList[1]);
+
   function handleSubmit(item: IListItem | null) {
     if (item && item.title.length > 0) {
+      item.type = selectedCatelog.type;
       onSubmit(item);
     }
   }
@@ -53,7 +59,7 @@ export default function AddItemDialog(props: IAddItemDialogOpenProps) {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+              <Dialog.Panel className="w-full max-w-md transform rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                 <Dialog.Title
                   as="h3"
                   className="text-md font-medium leading-6 text-gray-900"
@@ -73,6 +79,10 @@ export default function AddItemDialog(props: IAddItemDialogOpenProps) {
                       });
                     }}
                   />
+                  <CatelogSelect
+                    selected={selectedCatelog}
+                    onChange={setSelectedCatelog}
+                  ></CatelogSelect>
                 </div>
 
                 <div className="mt-4 flex justify-end">

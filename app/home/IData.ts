@@ -1,7 +1,8 @@
 export interface IListItem {
   title: string;
-  id: number;
+  id: string;
   status: number;
+  type: number;
 }
 
 export type IList = Array<IListItem>;

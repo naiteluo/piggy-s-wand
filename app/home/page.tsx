@@ -6,26 +6,46 @@ import ListItem from "./list-item";
 import AddItemDialog from "./add-item-dialog";
 import Image from "next/image";
 import ToggleVisibilityBtn from "./toggle-visibility-btn";
-import { getListFromDB, updateListToDB } from "./data";
+import { ICatelog, catelogList, getListFromDB, updateListToDB } from "./data";
+import CatelogSelect from "./catelog-select";
 
 export default function HomePage() {
   const [currentItem, setCurrentItem] = useState<IListItem | null>(null);
   const [list, setList] = useState<IList>([]);
+  const [selectedCatelog, setSelectedCatelog] = useState(catelogList[0]);
 
   useEffect(() => {
-    setList(getListFromDB());
+    setListWithFilter();
   }, []);
 
+  useEffect(() => {
+    setListWithFilter();
+  }, [selectedCatelog]);
+
   function setListAndUpdateDB(list: IList) {
-    setList(list);
     updateListToDB(list);
+    setListWithFilter();
+  }
+
+  function isItemFullfilSelctedCatelog(item: IListItem) {
+    if (!selectedCatelog || selectedCatelog.type === 0) {
+      return true;
+    } else {
+      return item.type === selectedCatelog.type;
+    }
+  }
+
+  function setListWithFilter() {
+    const list = getListFromDB();
+    console.log(selectedCatelog, list.filter(isItemFullfilSelctedCatelog));
+    setList(list.filter(isItemFullfilSelctedCatelog));
   }
 
   const [isAddItemDialogOpen, setIsAddItemDialogOpen] = useState(false);
 
   function handleAddItemDialogSubmit(item: IListItem) {
-    item.id = +new Date();
-    setListAndUpdateDB([...list, item]);
+    item.id = `${+new Date()}`;
+    setListAndUpdateDB([...getListFromDB(), item]);
     setIsAddItemDialogOpen(false);
   }
 
@@ -34,6 +54,7 @@ export default function HomePage() {
   }
 
   function handleItemUpdate(item: IListItem) {
+    const list = getListFromDB();
     const index = list.findIndex((v) => item.id === v.id);
     setListAndUpdateDB([
       ...list.slice(0, index),
@@ -43,11 +64,13 @@ export default function HomePage() {
   }
 
   function handleRemoveItem(item: IListItem) {
+    const list = getListFromDB();
     const index = list.findIndex((v) => item.id === v.id);
     setListAndUpdateDB([...list.slice(0, index), ...list.slice(index + 1)]);
   }
 
   function handleToggleAllStatus(status: boolean) {
+    const list = getListFromDB();
     setListAndUpdateDB(
       list.map((v) => {
         return {
@@ -67,7 +90,9 @@ export default function HomePage() {
   }
 
   function handleRandomPick() {
-    const filteredList = list.filter((item) => item.status === 1);
+    const filteredList = list
+      .filter((item) => item.status === 1)
+      .filter(isItemFullfilSelctedCatelog);
     const index = Math.floor(Math.random() * filteredList.length);
 
     setCurrentItem(filteredList[index]);
@@ -77,12 +102,16 @@ export default function HomePage() {
     setCurrentItem(null);
   }
 
+  function handleCatelogChange(catelog: ICatelog) {
+    setSelectedCatelog(() => catelog);
+  }
+
   const sectionClassName =
     "shadow-md border py-3 px-3.5 mb-4 rounded-sm text-sm select-none w-full flex flex-col";
 
   return (
     <main className="flex min-h-screen flex-col items-center bg-white p-4">
-      <nav className="fixed top-0 flex w-full flex-wrap items-center justify-between bg-pink-600 p-4 shadow-md text-white">
+      <nav className="fixed top-0 flex w-full flex-wrap items-center justify-between bg-pink-600 p-4 text-white shadow-md">
         <h1>Piggy&apos;s Wand</h1>
         <button></button>
       </nav>
@@ -119,33 +148,32 @@ export default function HomePage() {
           })()
         }
       </section>
-      {(() => {
-        if (list.length > 0) {
-          return (
-            <section className={sectionClassName}>
-              <h2 className="mb-1.5 ml-1.5 mr-6 flex font-semibold text-slate-600">
-                <span className="mr-auto">菜单</span>
-                <ToggleVisibilityBtn
-                  status={list.findIndex((v) => v.status === 0) !== -1}
-                  onToggle={handleToggleAllStatus}
-                ></ToggleVisibilityBtn>
-              </h2>
-              <ul className="flex flex-wrap divide-y divide-gray-300 ">
-                {list.map((item) => (
-                  <ListItem
-                    key={item.id}
-                    item={item}
-                    isActivated={!!(currentItem && item.id === currentItem.id)}
-                    onItemClick={handleUpdateCurrentItem}
-                    onItemUpdate={handleItemUpdate}
-                    onItemRemove={handleRemoveItem}
-                  ></ListItem>
-                ))}
-              </ul>
-            </section>
-          );
-        }
-      })()}
+      <section className={sectionClassName}>
+        <h2 className="mb-1.5 ml-1.5 mr-6 flex items-center font-semibold text-slate-600">
+          <div className="mr-auto w-40">
+            <CatelogSelect
+              selected={selectedCatelog}
+              onChange={handleCatelogChange}
+            ></CatelogSelect>
+          </div>
+          <ToggleVisibilityBtn
+            status={list.findIndex((v) => v.status === 0) !== -1}
+            onToggle={handleToggleAllStatus}
+          ></ToggleVisibilityBtn>
+        </h2>
+        <ul className="flex flex-wrap divide-y divide-gray-300 ">
+          {list.map((item) => (
+            <ListItem
+              key={item.id}
+              item={item}
+              isActivated={!!(currentItem && item.id === currentItem.id)}
+              onItemClick={handleUpdateCurrentItem}
+              onItemUpdate={handleItemUpdate}
+              onItemRemove={handleRemoveItem}
+            ></ListItem>
+          ))}
+        </ul>
+      </section>
 
       <section className="w-18 h-18 fixed bottom-0 right-0 flex flex-col">
         {(() => {
