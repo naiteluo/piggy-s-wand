@@ -17,3 +17,10 @@ export function updateListToDB(list: Array<IListItem>) {
     window.localStorage.setItem(DBKey, JSON.stringify(list));
   }
 }
+
+export const catelogList = [
+  {
+    type: 0,
+    
+  }
+]
