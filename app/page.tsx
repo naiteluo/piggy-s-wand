@@ -8,6 +8,7 @@ import Image from "next/image";
 import ToggleVisibilityBtn from "./toggle-visibility-btn";
 import { ICatelog, catelogList, getListFromDB, updateListToDB } from "./data";
 import CatelogSelect from "./catelog-select";
+import Footerbar from "./footbar";
 
 export default function HomePage() {
   const [currentItem, setCurrentItem] = useState<IListItem | null>(null);
@@ -111,7 +112,7 @@ export default function HomePage() {
 
   return (
     <main className="flex min-h-screen flex-col items-center bg-white p-4">
-      <nav className="fixed top-0 flex w-full flex-wrap items-center justify-between bg-pink-600 p-4 text-white shadow-md">
+      <nav className=" z-50 fixed top-0 flex w-full flex-wrap items-center justify-between bg-pink-600 p-4 text-white shadow-md">
         <h1>Piggy&apos;s Wand</h1>
         <button></button>
       </nav>
@@ -249,6 +250,7 @@ export default function HomePage() {
           onCancel={handleAddItemDialogCancel}
         ></AddItemDialog>
       </section>
+      <Footerbar></Footerbar>
     </main>
   );
 }
